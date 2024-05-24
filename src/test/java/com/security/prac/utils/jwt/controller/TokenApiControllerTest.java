@@ -53,7 +53,6 @@ class TokenApiControllerTest {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
                 .build();
         refreshTokenRepository.deleteAll();
-        userRepository.deleteAll();
     }
 
     @DisplayName("CreateNewAccessToken")
@@ -62,10 +61,8 @@ class TokenApiControllerTest {
         // given
         final String url = "/api/token";
 
-        User testUser = userRepository.save(User.builder()
-                .email("test2@test.com")
-                .passwordHashed("test")
-                .build());
+        User testUser = userRepository.findByEmail("test").orElseThrow(() ->
+                new IllegalArgumentException("User not found"));
 
         String refreshToken = JwtFactory.builder()
                 .claims(Map.of("id", testUser.getId()))
