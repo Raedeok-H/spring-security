@@ -8,11 +8,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
 @RequiredArgsConstructor
+@Component // Bean 등록을 하면 확장한 필터 대신 사용됨. 빈등록을 안하면 security 설정에 직접 등록해주어야함
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtProvider jwtTokenProvider;
     private final static String HEADER_AUTHORIZATION = "Authorization";

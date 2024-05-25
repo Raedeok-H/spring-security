@@ -45,7 +45,8 @@ public class WebSecurityConfig {
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
                 )
-                .csrf(AbstractHttpConfigurer::disable);
+//                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .csrf(AbstractHttpConfigurer::disable); // 배포시에는 cors 설정을 해주어야한다.
 
         // http.addFilterAt(new CustomFilter(), UsernamePasswordAuthenticationFilter.class);
         // 위의 주석처럼 사용하는 것은, 커스텀 필터를 추가하는 방법이다.
