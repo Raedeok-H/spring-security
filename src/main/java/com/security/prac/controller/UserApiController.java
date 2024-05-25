@@ -33,10 +33,4 @@ public class UserApiController {
                 SecurityContextHolder.getContext().getAuthentication());
         return "redirect:/login";
     }
-
-    @PostMapping("/login")
-    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequest loginRequest) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(userService.login(loginRequest));
-    }
 }
