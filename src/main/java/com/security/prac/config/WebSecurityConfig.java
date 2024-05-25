@@ -6,8 +6,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -30,20 +30,24 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/login", "/signup", "/user").permitAll()
+                        .requestMatchers("/swagger-ui/**","/login", "/signup", "/user", "/api/token").permitAll() // accessToken 재발급 uri 도 허용해줘야함.
                         .anyRequest().authenticated()
                 )
-                .formLogin(formLogin -> formLogin
-//                        .loginProcessingUrl("/api/login") // 로그인 요청 URL 설정 (기본은 /login 에 POST 요청)
-                        .loginPage("/login")
-                        .defaultSuccessUrl("/home", true)
-                        .permitAll()
-                )
+//                .formLogin(formLogin -> formLogin
+////                        .loginProcessingUrl("/api/login") // 로그인 요청 URL 설정 (기본은 /login 에 POST 요청)
+//                                .loginPage("/login")
+//                                .defaultSuccessUrl("/home", true)
+//                                .permitAll()
+//                )
+                .formLogin(AbstractHttpConfigurer::disable)
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login")
-                        .invalidateHttpSession(true)
+                        .invalidateHttpSession(true) // 로그아웃시 세션 비워주기
                         .deleteCookies("JSESSIONID")
+                )
+                .sessionManagement(sessionManagement -> sessionManagement
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 무상태 설정(jwt 사용시 서버에서 세션관리를 안하기 때문)
                 )
 //                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .csrf(AbstractHttpConfigurer::disable); // 배포시에는 cors 설정을 해주어야한다.
