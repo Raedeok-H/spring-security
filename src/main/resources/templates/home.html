@@ -1,15 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <title>Home</title>
     <style>
-        body { font-family: Arial, sans-serif; }
-        .container { width: 300px; margin: 0 auto; text-align: center; }
-        h1 { text-align: center; }
-        .user-info { margin-top: 20px; }
-        .user-info p { margin: 5px 0; }
-        .logout-button {
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            width: 300px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .user-info {
+            margin-top: 20px;
+        }
+
+        .user-info p {
+            margin: 5px 0;
+        }
+
+        .link-button {
             margin-top: 20px;
             padding: 10px 20px;
             background-color: #007bff;
@@ -28,14 +45,15 @@
     <div class="user-info">
         <p><strong>Email:</strong> <span th:text="${UserResponse.email}">email@example.com</span></p>
         <p><strong>Password:</strong> <span th:text="${UserResponse.password}">password</span></p>
-<!--        <p><strong>Roles:</strong>-->
-<!--        <ul>-->
-<!--            <li th:each="role : ${UserResponse.authorities}" th:text="${role.authority}">ROLE_USER</li>-->
-<!--        </ul>-->
+        <!--        <p><strong>Roles:</strong>-->
+        <!--        <ul>-->
+        <!--            <li th:each="role : ${UserResponse.authorities}" th:text="${role.authority}">ROLE_USER</li>-->
+        <!--        </ul>-->
         <!--만약 Roles가 있다면 이런식으로 넘겨받을수도 있음(지금 응답 객체에는 없다)-->
         </p>
     </div>
-    <a href="/logout" class="logout-button">Logout</a>
+    <a href="/logout" class="link-button" style="display: block;">Logout</a>
+    <a href="/" class="link-button" style="display: block;">Swagger-docs</a>
 </div>
 </body>
 </html>

@@ -18,11 +18,13 @@ import org.springframework.security.web.SecurityFilterChain;
 public class WebSecurityConfig {
     private final UserDetailsService userDetailsService;
 
-    @Bean
-    public WebSecurityCustomizer configure() {
-        return (web) -> web.ignoring()
-                .requestMatchers("/static/**","/template/**", "/swagger-ui/**", "/v3/api-docs/**");
-    }
+    // Swagger 문서를 로그인 없이 들어가게 해봤는데,
+    // 로그인하지 않고 들어가면 제대로 안나와서 소용이 없는 듯
+//    @Bean
+//    public WebSecurityCustomizer configure() {
+//        return (web) -> web.ignoring()
+//                .requestMatchers("/swagger-ui/**");
+//    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -32,6 +34,7 @@ public class WebSecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .formLogin(formLogin -> formLogin
+//                        .loginProcessingUrl("/api/login") // 로그인 요청 URL 설정 (기본은 /login 에 POST 요청)
                         .loginPage("/login")
                         .defaultSuccessUrl("/home", true)
                         .permitAll()
@@ -43,6 +46,7 @@ public class WebSecurityConfig {
                         .deleteCookies("JSESSIONID")
                 )
                 .csrf(AbstractHttpConfigurer::disable);
+
         // http.addFilterAt(new CustomFilter(), UsernamePasswordAuthenticationFilter.class);
         // 위의 주석처럼 사용하는 것은, 커스텀 필터를 추가하는 방법이다.
         // 기존에 정해진 스프링의 필터 체인들이 있는데, addFilter[At(), Before(), After()]를 사용하면,
