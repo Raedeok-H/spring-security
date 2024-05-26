@@ -29,6 +29,7 @@ public class WebSecurityConfig {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     private final UserService userService;
+    private final JwtProvider JwtProvider;
 
     // Swagger 문서를 로그인 없이 들어가게 해봤는데,
     // 로그인하지 않고 들어가면 제대로 안나와서 소용이 없는 듯
@@ -55,7 +56,8 @@ public class WebSecurityConfig {
                 .sessionManagement(sessionManagement -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 무상태 설정(jwt 사용시 서버에서 세션관리를 안하기 때문)
                 )
-                .addFilterAt(customAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAt(loginAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .csrf(AbstractHttpConfigurer::disable); // 배포시에는 cors 설정을 해주어야한다.
 
 
@@ -76,9 +78,14 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public LoginAuthenticationFilter customAuthenticationFilter() throws Exception {
+    public LoginAuthenticationFilter loginAuthenticationFilter() throws Exception {
         LoginAuthenticationFilter filter = new LoginAuthenticationFilter(authenticationManager(authenticationConfiguration), userService);
         filter.setAuthenticationManager(authenticationManager(authenticationConfiguration));
         return filter;
+    }
+
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter(JwtProvider);
     }
 }

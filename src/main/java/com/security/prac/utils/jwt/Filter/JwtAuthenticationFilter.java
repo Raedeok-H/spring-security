@@ -14,7 +14,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @RequiredArgsConstructor
-@Component // Bean 등록을 하면 확장한 필터 대신 사용됨. 빈등록을 안하면 security 설정에 직접 등록해주어야함
+//@Component // Bean 등록을 하면 확장한 필터 대신 사용됨. 빈등록을 안하면 security 설정에 직접 등록해주어야함
+// 커스텀 필터 한개 이상 등록하면 나머지도 수동 등록 해줘야하는듯
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtProvider jwtTokenProvider;
     private final static String HEADER_AUTHORIZATION = "Authorization";
