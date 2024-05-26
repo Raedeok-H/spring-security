@@ -38,7 +38,9 @@ dependencies {
 
     implementation 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0' // Springdoc OpenAPI 의존성 추가
+
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0' // Springdoc OpenAPI 의존성 추가
+
     runtimeOnly 'com.h2database:h2'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
