@@ -7,13 +7,12 @@ import com.security.prac.repository.UserRepository;
 import com.security.prac.utils.jwt.JwtProvider;
 import com.security.prac.utils.jwt.entity.RefreshToken;
 import com.security.prac.utils.jwt.repository.RefreshTokenRepository;
-import com.security.prac.utils.jwt.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -52,5 +51,15 @@ public class UserService {
         refreshTokenRepository.save(new RefreshToken(user.getId(), refreshToken));
 
         return new LoginResponseDto(email, accessToken, refreshToken);
+    }
+
+    @Transactional
+    public boolean deleteRefreshTokenByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .map(user -> {
+                    refreshTokenRepository.deleteByUserId(user.getId());
+                    return true;
+                })
+                .orElse(false);
     }
 }

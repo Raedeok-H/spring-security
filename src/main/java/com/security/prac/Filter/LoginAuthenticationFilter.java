@@ -23,6 +23,8 @@ public class LoginAuthenticationFilter extends UsernamePasswordAuthenticationFil
     public LoginAuthenticationFilter(AuthenticationManager authenticationManager, UserService userService) {
         this.authenticationManager = authenticationManager;
         this.userService = userService;
+        setFilterProcessesUrl("/api/login");
+        setPostOnly(true);
     }
 
     @Override

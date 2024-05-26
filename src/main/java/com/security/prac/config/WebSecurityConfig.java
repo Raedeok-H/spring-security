@@ -1,10 +1,12 @@
 package com.security.prac.config;
 
 import com.security.prac.Filter.LoginAuthenticationFilter;
+import com.security.prac.handler.CustomLogoutHandler;
 import com.security.prac.service.UserService;
 import com.security.prac.utils.jwt.Filter.JwtAuthenticationFilter;
 import com.security.prac.utils.jwt.JwtProvider;
 import com.security.prac.utils.jwt.repository.RefreshTokenRepository;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +22,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -31,6 +34,7 @@ public class WebSecurityConfig {
 
     private final UserService userService;
     private final JwtProvider JwtProvider;
+    private final CustomLogoutHandler customLogoutHandler;
 
     // Swagger 문서를 인증 없이 볼 수 있도록 설정
     @Bean
@@ -43,13 +47,26 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers( "/login", "/signup", "/user", "/api/token").permitAll() // accessToken 재발급 uri 도 허용해줘야함.
+                        .requestMatchers( "/api/login", "/api/token").permitAll() // accessToken 재발급 uri 도 허용해줘야함.
                         .anyRequest().authenticated()
                 )
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login")
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/api/logout", "POST")) // Only allow POST requests
+                        .addLogoutHandler(customLogoutHandler)
+                        .logoutSuccessHandler((request, response, authentication) -> {
+                            Boolean logoutSuccess = (Boolean) request.getAttribute("logoutSuccess");
+                            response.setContentType("application/json");
+                            if (Boolean.TRUE.equals(logoutSuccess)) {
+                                response.setStatus(HttpServletResponse.SC_OK);
+                                response.getWriter().write("{\"message\": \"Logout successful\"" +
+                                        ", \"email\": \"" + request.getAttribute("email") + "\"}");
+                            } else {
+                                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                                response.getWriter().write("{\"message\": \"Logout failed\"" +
+                                        ", \"email\": \"" + request.getAttribute("email") + "\"}");
+                            }
+                        })
                         .invalidateHttpSession(true) // 로그아웃시 세션 비워주기
                         .deleteCookies("JSESSIONID")
                 )
