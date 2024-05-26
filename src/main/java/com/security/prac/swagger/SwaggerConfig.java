@@ -20,15 +20,6 @@ public class SwaggerConfig {
                 .build();
     }
 
-    // swagger 관련 된 것을 security 제외 안 했을 때, 그룹들에 접근 가능한지 테스트용 -> 로그인 하면 접근 가능함을 확인
-    @Bean
-    public GroupedOpenApi viewApi() {
-        return GroupedOpenApi.builder()
-                .group("VIEW")
-                .pathsToMatch("/**")
-                .build();
-    }
-
     @Bean
     public OpenAPI getOpenApi() {
         return new OpenAPI().components(new Components())

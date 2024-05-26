@@ -2,6 +2,7 @@ package com.security.prac.config;
 
 import com.security.prac.Filter.LoginAuthenticationFilter;
 import com.security.prac.service.UserService;
+import com.security.prac.utils.jwt.Filter.JwtAuthenticationFilter;
 import com.security.prac.utils.jwt.JwtProvider;
 import com.security.prac.utils.jwt.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,12 +32,11 @@ public class WebSecurityConfig {
     private final UserService userService;
     private final JwtProvider JwtProvider;
 
-    // Swagger 문서를 로그인 없이 들어가게 해봤는데,
-    // 로그인하지 않고 들어가면 제대로 안나와서 소용이 없는 듯
+    // Swagger 문서를 인증 없이 볼 수 있도록 설정
     @Bean
     public WebSecurityCustomizer configure() {
         return (web) -> web.ignoring()
-                .requestMatchers("/swagger-ui/**");
+                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**", "/"); // TODO: 마지막 / 는 개발시에 문서보기 편하라고 추가한것
     }
 
     @Bean
